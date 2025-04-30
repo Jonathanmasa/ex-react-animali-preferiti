@@ -1,24 +1,100 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>I miei animali Preferiti</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css">
+  <title>I miei animali Preferiti</title>
+
 </head>
 <body>
-    <header>
-      <h1>I miei animali Preferiti</h1>
-    </header>
-    <main>
-        <figure>
-            <img src="https://picsum.photos/400/300" alt="Immagine Casuale">
-        </figure>
-        <div class="lista-animali"></div>
-    </main>
-      <footer>
-      <p>Creato con amore da... un collega sbadato! 🐾</p>
-    </footer>
-  </body>
+  <header>
+    <h1>I miei animali Preferiti</h1>
+  </header>
+  <main>
+    <figure>
+      <img src="https://picsum.photos/400/300" alt="Immagine Casuale">
+    </figure>
+    <div class="lista-animali"></div>
+  </main>
+  <footer>
+    <p>Creato con amore da... un collega sbadato! 🐾</p>
+  </footer>
+
+  <!-- React & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- App React -->
+  <script type="text/babel">
+    function Modal({ title, content, show = false, onClose = () => {}, onConfirm = () => {} }) {
+      return show && ReactDOM.createPortal(
+        <div className="modal-container">
+          <div className="modal">
+            <h2>{title}</h2>
+            {content}
+            <div style={{ marginTop: '1em' }}>
+              <button onClick={onClose}>Annulla</button>
+              <button onClick={onConfirm} style={{ marginLeft: '1em' }}>Conferma</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      );
+    }
+
+    function ListaAnimali() {
+      const [animals, setAnimals] = React.useState([]);
+      const [showModal, setShowModal] = React.useState(false);
+      const [newAnimal, setNewAnimal] = React.useState("");
+
+      const handleAddAnimal = () => {
+        setShowModal(true);
+      };
+
+      const handleConfirm = () => {
+        if (newAnimal.trim()) {
+          setAnimals([...animals, newAnimal.trim()]);
+        }
+        setNewAnimal("");
+        setShowModal(false);
+      };
+
+      return (
+        <>
+          <button onClick={handleAddAnimal}>Aggiungi Animale</button>
+
+          <details>
+            <summary>Animali</summary>
+            <ul>
+              {animals.map((animal, index) => (
+                <li key={index}>{animal}</li>
+              ))}
+            </ul>
+          </details>
+
+          <Modal
+            title="Inserisci un animale"
+            content={
+              <input
+                type="text"
+                value={newAnimal}
+                onChange={e => setNewAnimal(e.target.value)}
+                placeholder="Es. Gatto"
+              />
+            }
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            onConfirm={handleConfirm}
+          />
+        </>
+      );
+    }
+
+    const rootElement = document.querySelector('.lista-animali');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<ListaAnimali />);
+  </script>
+</body>
 </html>
